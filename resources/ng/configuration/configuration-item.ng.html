@@ -1,0 +1,15 @@
+<div class="configuration-item {{item.type}}"
+     ng-class="{connected: (!editing && isItemConnected()), disconnected: !(editing || isItemConnected())}">
+    <div ng-if="!editing">
+        <div class="{{item.type}}-name" >{{item.name}}</div>
+        <div class="{{item.type}}-url" >{{item.url}}</div>
+        <div class="configuration-button {{item.type}}-button edit" ng-click="edit()">Edit</div>
+    </div>
+    <div ng-if="editing">
+        <input class="{{item.type}}-name" type="text" ng-model="item.name"/>
+        <input class="{{item.type}}-url" type="text" ng-model="item.url"/>
+        <div class="configuration-button {{item.type}}-button save" ng-click="save()">Save</div>
+        <div class="configuration-button {{item.type}}-button cancel" ng-click="cancel()">Cancel</div>
+        <div class="configuration-button {{item.type}}-button delete" ng-click="remove()">Delete</div>
+    </div>
+</div>

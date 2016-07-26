@@ -1,0 +1,15 @@
+<html>
+    <head>
+        <link href="app_ui.css" rel="stylesheet" type="text/css" />
+        <script src="../node_modules/angular/angular.js"></script>
+        
+        <script src="ng/configuration/configuration-controller.js"></script>
+        <script src="ng/configuration/configuration-service.js"></script>
+        <script src="ng/configuration/configuration-container.js"></script>
+    </head>
+    <body id="app-ui-html" ng-app="appConfiguration" ng-controller="ConfigurationController">
+        <div ng-repeat="cfg in configurationTypes">
+            <rk8-configuration-container type="{{cfg.type}}" title="{{cfg.title}}"></rk8-configuration-container>
+        </div>
+    </body>
+</html>

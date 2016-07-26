@@ -1,0 +1,35 @@
+body#local-html {
+    background-color: rgb(33,33,33);
+    color: rgb(255,255,255);
+}
+
+.auth_button {
+    display: block;
+    border-radius: .25em;
+    margin: .25em;
+    padding: .25em;
+    text-align: center;
+}
+
+.yes_auth_button {
+    background-color: rgb(33,255,33);
+}
+
+.no_auth_button {
+    background-color: rgb(255,33,33);
+}
+
+.login_auth_button {
+    background-color: rgb(33,33,248);
+}
+
+/* about.html */
+#about-html{
+    text-align: center;
+}
+
+.about-container {
+    display: inline-block;
+    margin: 1em;
+    text-align: left;
+}

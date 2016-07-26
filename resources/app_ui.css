@@ -1,0 +1,79 @@
+body {
+    background-color: rgb(33,33,33);
+    color: rgb(255,255,255);
+}
+
+.configuration-container {
+    margin-bottom: 1em;
+}
+
+.configuration-container .container-title {
+    font-size: 1.25em;
+    font-weight: 600;
+    margin-bottom: .5em;
+}
+
+.container-list {
+    margin: 0 0 .5em 0;
+    border: solid #fff;
+    border-width: 1px 0;
+}
+
+.configuration-button {
+    display: block;
+    border-radius: .25em;
+    margin: .25em;
+    padding: .25em;
+    text-align: center;
+    
+    background-color: rgb(233,233,233);
+    color: rgb(0,0,0);
+}
+
+.configuration-button.add, .configuration-button.save {
+    background-color: rgb(33,255,33);
+}
+
+.configuration-button.delete {
+    background-color: rgb(255,33,33);
+}
+
+.configuration-item {
+    position: relative;
+    margin: .5em 0;
+    overflow: hidden;
+}
+
+.configuration-item .configuration-button {
+    float: right;
+    width: 25%;
+}
+
+.configuration-item .configuration-button.save, .configuration-item .configuration-button.edit {
+    float: left;
+}
+
+.configuration-item input[type="text"] {
+    display: block;
+    font-size: 1.15em;
+    width: 100%;
+}
+
+.configuration-item::after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 1em;
+    width: 1em;
+}
+
+.configuration-item.connected::after {
+    content: "\2713";
+    color: rgb(33,255,33);
+}
+
+.configuration-item.disconnected::after {
+    content: "\2717";
+    color: rgb(255,33,33);    
+}
+
