@@ -116,7 +116,13 @@ function createTray(){
 			click: function(){
 				return createWindow({type: "settings"});
 			}
-	  }
+	  },
+    {
+      type: 'separator'
+    },
+    {
+      role: 'quit'
+    }
   ]);
   tray.setToolTip('RocketAuth Desktop');
   tray.setContextMenu(contextMenu);
