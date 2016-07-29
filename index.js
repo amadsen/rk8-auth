@@ -68,16 +68,17 @@ function createWindow (opts) {
 
   // Create the browser window.
   let aWindow = win[opts.id] || new BrowserWindow(
-    extend({width: 320, height: 480, frame: false}, opts)
+    extend({width: 320, height: 480}, opts)
   );
-  winIdToOpts[aWindow.id] = opts;
+  let webContentsId = aWindow.webContents.id;
+  winIdToOpts[webContentsId] = opts;
 
   // and load the url for the window.
   opts.url = path.resolve(__dirname, opts.url);
   aWindow.loadURL(`file://${opts.url}`);
 
   // Open the DevTools.
-  //win.webContents.openDevTools();
+  //aWindow.webContents.openDevTools();
 
   // Emitted when the window is closed.
   aWindow.on('closed', () => {
@@ -86,10 +87,18 @@ function createWindow (opts) {
     // when you should delete the corresponding element.
     if('function' != typeof opts.isSingleton || !opts.isSingleton()){
       win[opts.id] = null;
-      winIdToOpts[aWindow.id] = null;
+      winIdToOpts[webContentsId] = null;
     }
   });
+
+  return aWindow;
 }
+
+ipcMain.on('auth-result', (evt, result) => {
+  let
+    opts = winIdToOpts[evt.sender.id],
+    aWindow = win[opts.id];
+});
 
 function createTray(){
   tray = new Tray('icon/simple-rk8-small-template@2x.png');
