@@ -7,7 +7,7 @@
  *  rc-file based configs for the larger application
  */
 var appCfg = angular.module('appConfiguration');
-var register = window.register || require("./../lib/register.js");
+var register = require("./../lib/register.js");
 
 appCfg.factory('ConfigurationService', ['$q', '$rootScope', function($q, $rootScope) {
     var registrations = register(),

@@ -12,6 +12,7 @@ const
 // Get createMainWindow and createTray
 const {createMainWindow} = require('./lib/create-window.js');
 const {createTray} = require('./lib/create-tray.js');
+const register = require('./lib/register.js');
 
 
 /*
@@ -55,9 +56,5 @@ app.on('activate', () => {
   }
 });
 
-
-
-
-/*
- TODO: port over notifications, registrations, etc.
-*/
+// Try to initialize the registered connections
+register().connect();
