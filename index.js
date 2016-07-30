@@ -1,8 +1,8 @@
 "use strict";
 
 const electron = require('electron');
-// Get app, BrowserWindow, Menu, and Tray from electron
-const {app, BrowserWindow, Menu, Tray, ipcMain} = electron;
+// Get app from electron
+const {app} = electron;
 
 // node modules
 const
