@@ -6,7 +6,7 @@ var electron = require('electron'),
 select(".auth_button").forEach( on("click", function(btn){
     var result = ('function' === typeof btn.authResult)?
       btn.authResult()
-      : btn.getAttribute("data-auth-result") || btn.textContent;
+      : (btn.getAttribute("data-auth-result") || btn.textContent);
     return ipcRenderer.send( 'message', { type: 'auth-result', result: result } );
 }));
 
