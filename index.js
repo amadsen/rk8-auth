@@ -4,13 +4,15 @@ const electron = require('electron');
 // Get app, BrowserWindow, Menu, and Tray from electron
 const {app, BrowserWindow, Menu, Tray, ipcMain} = electron;
 
-// node path module
+// node modules
 const
   path = require('path'),
   extend = require('deep-extend');
 
-// Our module containing standard window configurations for our app
-const windowConfigs = require('./lib/window-configs.js');
+// Get createMainWindow and createTray
+const {createMainWindow} = require('./lib/create-window.js');
+const {createTray} = require('./lib/create-tray.js');
+
 
 /*
 TODO: make sure we don't npm link rk8-pki.js!!! (use a git dependency at first)
@@ -24,11 +26,6 @@ process.on('uncaughtException', function (err) {
      process.exit(err.code || 1);
    }, 500);
 });
-
-// Keep a global object to reference active windows. We start with none.
-let win = {},
-    winIdToOpts = {},
-    tray = null;
 
 // start up RocketAuth when the user logs in (at least by default).
 app.setLoginItemSettings({openAtLogin: true});
@@ -58,72 +55,9 @@ app.on('activate', () => {
   }
 });
 
-function createMainWindow () {
-  return createWindow({ type: "main" });
-}
 
-function createWindow (opts) {
-  // calculate the opts
-  opts = windowConfigs.get(opts);
 
-  // Create the browser window.
-  let aWindow = win[opts.id] || new BrowserWindow(
-    extend({width: 320, height: 480}, opts)
-  );
-  let webContentsId = aWindow.webContents.id;
-  winIdToOpts[webContentsId] = opts;
 
-  // and load the url for the window.
-  opts.url = path.resolve(__dirname, opts.url);
-  aWindow.loadURL(`file://${opts.url}`);
-
-  // Open the DevTools.
-  //aWindow.webContents.openDevTools();
-
-  // Emitted when the window is closed.
-  aWindow.on('closed', () => {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
-    if('function' != typeof opts.isSingleton || !opts.isSingleton()){
-      win[opts.id] = null;
-      winIdToOpts[webContentsId] = null;
-    }
-  });
-
-  return aWindow;
-}
-
-ipcMain.on('auth-result', (evt, result) => {
-  let
-    opts = winIdToOpts[evt.sender.id],
-    aWindow = win[opts.id];
-});
-
-function createTray(){
-  tray = new Tray('icon/simple-rk8-small-template@2x.png');
-  const contextMenu = Menu.buildFromTemplate([
-    {
-			type: 'normal',
-			label: 'About',
-			click: function(){
-				return createWindow({type: "about"});
-			}
-		},
-		{
-			type: 'normal',
-			label: 'Settings',
-			click: function(){
-				return createWindow({type: "settings"});
-			}
-	  },
-    {
-      type: 'separator'
-    },
-    {
-      role: 'quit'
-    }
-  ]);
-  tray.setToolTip('RocketAuth Desktop');
-  tray.setContextMenu(contextMenu);
-}
+/*
+ TODO: port over notifications, registrations, etc.
+*/
