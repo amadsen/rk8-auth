@@ -7,25 +7,44 @@
  *  rc-file based configs for the larger application
  */
 var appCfg = angular.module('appConfiguration');
-var register = require("./../lib/register.js");
+/*
+TODO: replace communication through the register module with passing messages
+through ipcRenderer!!!
+*/
+var electron = require('electron'),
+    {ipcRenderer} = electron;
+
+function ipcCallback(eventId, data, done) {
+  var callbackEventId = [].concat(
+    eventId,
+    process.hrtime(),
+    Math.random()
+  ).join('|');
+  ipcRenderer.once(callbackEventId, (event, arg) => {
+    console.log('Callback Event:', callbackEventId, arguments);
+    done(arg.error, arg.data);
+  });
+  setImmediate(()=>{
+    ipcRenderer.send(eventId, {data, callbackEventId});
+  });
+}
 
 appCfg.factory('ConfigurationService', ['$q', '$rootScope', function($q, $rootScope) {
-    var registrations = register(),
-        savedConfig,
+    var savedConfig,
         activeConfig;
 
     // rebroadcast registration events on the angular $rootScope
-    registrations.on('registrations.event', function(){
-      //$rootScope.$broadcast.apply($rootScope, [].slice.call(arguments));
-      prepareActiveConfig();
+    ipcRenderer.on('registrations.event', function(event, cfg){
+      console.log('Registrations Event:', arguments);
+      prepareActiveConfig(cfg);
       $rootScope.$apply();
     });
 
 
     // transform the config from the format register.js uses / saves
     // to the form we use here.
-    function prepareActiveConfig() {
-        savedConfig = registrations.getConfig();
+    function prepareActiveConfig(cfg) {
+        savedConfig = cfg || ipcRenderer.sendSync('registrations.get-config');
         activeConfig = {};
         (Object.keys(savedConfig.registrations) || []).forEach( function (key){
             var item = savedConfig.registrations[key];
@@ -62,7 +81,8 @@ appCfg.factory('ConfigurationService', ['$q', '$rootScope', function($q, $rootSc
                 // reject promise with the error
                 return deferred.reject(err);
             }
-            register().saveRegistration(item, function(err){
+
+            ipcCallback('registrations.save', item, function(err){
                 if (err) {
                     // reject promise with the error
                     return deferred.reject(err);
@@ -75,7 +95,7 @@ appCfg.factory('ConfigurationService', ['$q', '$rootScope', function($q, $rootSc
         if (i > -1) {
             if (originalUrl !== item.url) {
                 fn = function() {
-                    register().removeRegistration({
+                    ipcCallback('registrations.remove', {
                         write: false,
                         url: originalUrl
                     }, internal_save);
@@ -96,7 +116,7 @@ appCfg.factory('ConfigurationService', ['$q', '$rootScope', function($q, $rootSc
             i = aList.indexOf(item);
 
         if (i > -1) {
-            register().removeRegistration(item, function(err){
+            ipcCallback('registrations.remove', item, function(err){
                 if (err) {
                     // reject promise with the error
                     return deferred.reject(err);
