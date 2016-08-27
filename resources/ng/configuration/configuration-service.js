@@ -14,31 +14,51 @@ through ipcRenderer!!!
 var electron = require('electron'),
     {ipcRenderer} = electron;
 
+var ipcCallbackMap = {};
+
+ipcRenderer.on('ipcCallbackEvent', (event, arg) => {
+  console.log('Callback Event:', event, arg);
+
+  let fn = ipcCallbackMap[arg.callbackEventId];
+  delete ipcCallbackMap[arg.callbackEventId];
+  if('function' === typeof fn){
+    fn(arg.error, arg.data);
+  }
+});
+
 function ipcCallback(eventId, data, done) {
   var callbackEventId = [].concat(
     eventId,
     process.hrtime(),
     Math.random()
-  ).join('|');
-  ipcRenderer.once(callbackEventId, (event, arg) => {
-    console.log('Callback Event:', callbackEventId, arguments);
-    done(arg.error, arg.data);
-  });
+  ).join('.');
+  ipcCallbackMap[callbackEventId] = done;
+
   setImmediate(()=>{
     ipcRenderer.send(eventId, {data, callbackEventId});
   });
 }
+
+var rebroadcastRegistrationEvents;
+// rebroadcast registration events on the angular $rootScope
+ipcRenderer.on('registrations.event', function(event, cfg){
+  console.log('Registrations Event:', arguments);
+  if('function' === typeof rebroadcastRegistrationEvents) {
+    setImmediate(()=>{
+      rebroadcastRegistrationEvents(event, cfg);
+    })
+  }
+});
 
 appCfg.factory('ConfigurationService', ['$q', '$rootScope', function($q, $rootScope) {
     var savedConfig,
         activeConfig;
 
     // rebroadcast registration events on the angular $rootScope
-    ipcRenderer.on('registrations.event', function(event, cfg){
-      console.log('Registrations Event:', arguments);
+    rebroadcastRegistrationEvents = function(event, cfg){
       prepareActiveConfig(cfg);
       $rootScope.$apply();
-    });
+    };
 
 
     // transform the config from the format register.js uses / saves
