@@ -10,6 +10,7 @@ select(".auth_button").forEach( on("click", function(btn){
     return ipcRenderer.send( 'message', { type: 'auth-result', result: result } );
 }));
 
-ipcRenderer.on('set-auth-question', () => {
+ipcRenderer.on('set-auth-question', (event, question) => {
+  console.log(question);
   (select(".auth_question")[0] || {}).innerText = question;
 });
