@@ -18,7 +18,7 @@
     "rc": "^1.1.6",
     "rk8-pki": "1.1.0-alpha",
     "socket.io-client": "^1.4.8",
-    "u2f-client": "github:itsnotvalid/u2f-client",
+    "u2f-client": "github:amadsen/u2f-client#read-write-useReport",
     "userhome": "^1.0.0",
     "uuid": "^2.0.2"
   },
