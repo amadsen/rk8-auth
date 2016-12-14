@@ -26,16 +26,10 @@ function captureSubmit (event) {
         var raw = submitReq.responseText,
             registrations = JSON.parse(/registrations\s?=\s?(.+);/m.exec(raw)[1]),
             request = JSON.parse(/request\s?=\s?(.+);/m.exec(raw)[1]),
-            user = /user\s?=\s?(.+);/m.exec(raw)[1],
-            maxQueueId = /maxQueueId\s?=\s?(.+);/m.exec(raw)[1],
+            user = /user\s?=\s?"(.+)";/m.exec(raw)[1],
+            maxQueueId = /maxQueueId\s?=\s?(\d+);/m.exec(raw)[1],
             hasTimedOut = false,
             timer;
-
-        console.log(submitReq.responseText);
-        console.log(registrations);
-        console.log(request);
-        console.log(user);
-        console.log(maxQueueId);
 
         var divForm = document.getElementById('mainBody');
         var divMessageBody = document.getElementById('messageBody');
@@ -109,21 +103,16 @@ function postUrlEncoded(opt, done){
 process.once('loaded', () => {
   var webContents = remote.getCurrentWebContents();
 
-  console.log('Adding u2f support to window.');
-
   global.u2f = new u2fc.BrowserApi(
     u2fc,
     (''+webContents.getURL()).replace(/(https?:\/\/.+\/?).*$/,"$1")
   );
 
   webContents.on('dom-ready', () => {
-    console.log('Capturing form submit.');
     var form = document.getElementById('form');
     form.addEventListener('submit', captureSubmit);
 
     setTimeout( function(){
-      console.log('Checking for startAuthenticate button');
-
       var proceedBtn = document.querySelector('#submitButton');
       if(proceedBtn && 'startAuthenticate' === proceedBtn.getAttribute('name') && proceedBtn.textContent == 'Proceed'){
         return setTimeout(function(){
