@@ -15,11 +15,6 @@ const {createTray} = require('./lib/create-tray.js');
 const register = require('./lib/register.js');
 
 
-/*
-TODO: make sure we don't npm link rk8-pki.js!!! (use a git dependency at first)
- because electron will need to rebuild the native dependencies (node-forge).
-*/
-
 process.on('uncaughtException', function (err) {
    console.error(err);
    console.error(err.stack);
